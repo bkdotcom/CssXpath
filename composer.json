@@ -1,0 +1,21 @@
+{
+	"name": "bdk/css-xpath",
+	"description": "Search html via CSS selector or convert css selector to xpath",
+	"keywords": ["css","xpath"],
+	"homepage": "http://github.com/bkdotcom/CssXpath",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Brad Kent",
+			"email": "bkfake-github@yahoo.com",
+			"homepage": "http://www.bradkent.com/",
+			"role": "Developer"
+		}
+	],
+	"autoload": {
+		"psr-4": { "bdk\\CssXpath\\": "src/" }
+	},
+	"require": {
+		"php": ">=5.3.0"
+	}
+}
