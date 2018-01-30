@@ -12,7 +12,7 @@ php:
 matrix:
   fast_finish: true
   include:
-    - php: 5.2
+    - php: 5.3
       dist: precise
   allow_failures:
     - php: hhvm-nightly

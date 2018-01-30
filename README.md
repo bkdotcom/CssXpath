@@ -4,9 +4,9 @@ CssXpath
 * Convert CSS selector to XPath
 * Query HTML string (or \DOMDocument) by CSS selector
 * Provide PHPUnit Assertions (once provided by PHPUnit)
-  * assertSelectCount($selector, $count, $actual, $message = '')
-  * assertSelectRegExp($selector, $pattern, $count, $actual, $message = '')
-  * assertSelectEquals($selector, $content, $count, $actual, $message = '')
+
+![No Dependencies](https://img.shields.io/badge/dependencies-none-333333.svg)
+[![Build Status](https://img.shields.io/travis/bkdotcom/CssXpath.svg)](https://travis-ci.org/bkdotcom/CssXpath)
 
 ## Installation
 
@@ -14,6 +14,13 @@ CssXpath
 composer require bdk/css-xpath
 ```
 ## Usage
+
+### CSS to XPath
+
+```PHP
+\bdk\CssXpath\CssXpath::cssToXpath('ul > li:first-child');	// returns '//ul/li[1]'
+```
+### Query DOM/HTML
 
 Example:
 
@@ -32,7 +39,12 @@ $html = <<<HTML
 </div>
 HTML;
 
+// use static method
 var_dump(\bdk\CssXpath\CssSelect::select($html, 'ul > li:last-child [href]'));
+
+// or create and use an instance
+$cssSelect = new \bdk\CssXpath\CssSelect($html);
+$found = $cssSelect->select('ul > li:last-child [href]');
 ```
 
 Output:
@@ -45,6 +57,16 @@ array (size=1)
         array (size=1)
           'href' => string '#' (length=1)
       'innerHTML' => string 'Five' (length=4)
- ```
+```
 
- pass a 3rd argument of `true`, to return a `\DOMNodeList` object instead of an array
+Pass a last argument of `true`, to return a `\DOMNodeList` object instead of an array
+
+### PHPUnit
+
+`bdk\CssXpath\DOMTestCase` extends `\PHPUnit\Framework\TestCase` and provids 3 assertions:
+
+  * `assertSelectCount($selector, $count, $actual, $message = '')`
+  * `assertSelectRegExp($selector, $pattern, $count, $actual, $message = '')`
+  * `assertSelectEquals($selector, $content, $count, $actual, $message = '')`
+
+These assertions were originally provided with [PHPUnit 3.7](https://phpunit.de/manual/3.7/en/writing-tests-for-phpunit.html#writing-tests-for-phpunit.assertions.assertSelectCount), but since removed

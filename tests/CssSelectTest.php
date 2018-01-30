@@ -37,6 +37,7 @@ class CssSelectTest extends \PHPUnit\Framework\TestCase
             array('h2:contains(Article) + p', 1),
             array('h2:contains(Article) + p:contains(Contents)', 1),
             array('div p + ul', 1),
+            array('ul li', 5),
             array('li ~ li', 4),
             array('li ~ li ~ li', 3),
             array('li + li', 4),
@@ -52,12 +53,13 @@ class CssSelectTest extends \PHPUnit\Framework\TestCase
             array('li:nth-last-child(3)', 1),
             array('li:nth-last-child(4)', 1),
             array('li:nth-last-child(6)', 0),
+            array('ul li! > a', 1),
+            array(':scope ul li > a', 1),
             array('.a', 2),
             array('#article', 1),
             array('[id="article"]', 1),
-            // array('ul $li > a', 1),
-            // array(':scope ul li > a', 1),
             array('.classa > .classb', 1),
+            array('ul > li:last-child [href]', 1),
         );
     }
 

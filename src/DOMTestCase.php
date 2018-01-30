@@ -15,40 +15,11 @@ namespace bdk\CssXpath;
 
 /**
  * PHPUnit DOM Assertions.
+ *
+ * Could (should?) be provided as a trait, but traits are php 5.4+  may need to test 5.3 as well!
  */
 abstract class DOMTestCase extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * Assert the presence, absence, or count of elements in a document matching
-     * the CSS $selector, regardless of the contents of those elements.
-     *
-     * The first argument, $selector, is the CSS selector used to match
-     * the elements in the $actual document.
-     *
-     * The second argument, $count, can be either boolean or numeric.
-     * When boolean, it asserts for presence of elements matching the selector
-     * (true) or absence of elements (false).
-     * When numeric, it asserts the count of elements.
-     *
-     * examples:
-     *   assertSelectCount("#binder", true, $xml);  // any?
-     *   assertSelectCount(".binder", 3, $xml);     // exactly 3?
-     *
-     * @param array                 $selector CSS selector
-     * @param integer|boolean|array $count    bool, count, or array('>'=5, <=10)
-     * @param mixed                 $actual   HTML
-     * @param string                $message  exception message
-     * @param boolean               $isHtml   not used
-     *
-     * @return void
-     *
-     * @link(https://phpunit.de/manual/3.7/en/writing-tests-for-phpunit.html#writing-tests-for-phpunit.assertions.assertSelectCount
-     */
-    public static function assertSelectCount($selector, $count, $actual, $message = '', $isHtml = true)
-    {
-        self::assertSelectEquals($selector, true, $count, $actual, $message, $isHtml);
-    }
-
     /**
      * Reports an error identified by $message
      *  if the CSS selector $selector does not match $count elements
@@ -119,6 +90,37 @@ abstract class DOMTestCase extends \PHPUnit\Framework\TestCase
         } else {
             throw new \PHPUnit\Framework\Exception('Invalid count format');
         }
+    }
+
+    /**
+     * Assert the presence, absence, or count of elements in a document matching
+     * the CSS $selector, regardless of the contents of those elements.
+     *
+     * The first argument, $selector, is the CSS selector used to match
+     * the elements in the $actual document.
+     *
+     * The second argument, $count, can be either boolean or numeric.
+     * When boolean, it asserts for presence of elements matching the selector
+     * (true) or absence of elements (false).
+     * When numeric, it asserts the count of elements.
+     *
+     * examples:
+     *   assertSelectCount("#binder", true, $xml);  // any?
+     *   assertSelectCount(".binder", 3, $xml);     // exactly 3?
+     *
+     * @param array                 $selector CSS selector
+     * @param integer|boolean|array $count    bool, count, or array('>'=5, <=10)
+     * @param mixed                 $actual   HTML
+     * @param string                $message  exception message
+     * @param boolean               $isHtml   not used
+     *
+     * @return void
+     *
+     * @link(https://phpunit.de/manual/3.7/en/writing-tests-for-phpunit.html#writing-tests-for-phpunit.assertions.assertSelectCount
+     */
+    public static function assertSelectCount($selector, $count, $actual, $message = '', $isHtml = true)
+    {
+        self::assertSelectEquals($selector, true, $count, $actual, $message, $isHtml);
     }
 
     /**

@@ -190,6 +190,24 @@ class CssXpath
                 	.($matches[1] ? '' : '*')
                 	.'[contains(concat(" ", normalize-space(@class), " "), " ' . $matches[2] . ' ")]';
             }, 1),
+            array('/:scope/', function () {
+                return '//';
+            }),
+            // E! : https://www.w3.org/TR/selectors4/
+            array('/^.+!.+$/', function ($matches) {
+                $subSelectors = explode(',', $matches[0]);
+                foreach ($subSelectors as $i => $subSelector) {
+                    $parts = explode('!', $subSelector);
+                    $subSelector = array_shift($parts);
+                    if (preg_match_all('/((?:[^\/]*\/?\/?)|$)/', $parts[0], $matches)) {
+                        $results = $matches[0];
+                        $results[] = str_repeat('/..', count($results) - 2);
+                        $subSelector .= implode('', $results);
+                    }
+                    $subSelectors[$i] = $subSelector;
+                }
+                return implode(',', $subSelectors);
+            }),
             // Restore strings
             array('/\[\{(\d+)\}\]/', function ($matches) use (&$strings) {
                 return $strings[$matches[1]];
@@ -211,6 +229,7 @@ class CssXpath
         $xpath = preg_match('/^\/\//', $xpath)
         	? $xpath
         	: '//'.$xpath;
+        $xpath = preg_replace('#/{4}#', '', $xpath);
         return $xpath;
 	}
 }
