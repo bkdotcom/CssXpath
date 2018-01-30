@@ -1,7 +1,6 @@
 language: php
 dist: trusty
 php:
-  - 5.3
   - 5.4
   - 5.5
   - 5.6
@@ -17,4 +16,4 @@ matrix:
   allow_failures:
     - php: hhvm-nightly
 before_script:
-  - curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar
+  - if [ $(phpenv version-name) = *"HipHop VM"* ]; then curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar; fi
