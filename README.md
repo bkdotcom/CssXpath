@@ -69,4 +69,4 @@ Pass a last argument of `true`, to return a `\DOMNodeList` object instead of an 
   * `assertSelectRegExp($selector, $pattern, $count, $actual, $message = '')`
   * `assertSelectEquals($selector, $content, $count, $actual, $message = '')`
 
-These assertions were originally provided with [PHPUnit 3.7](https://phpunit.de/manual/3.7/en/writing-tests-for-phpunit.html#writing-tests-for-phpunit.assertions.assertSelectCount), but since removed
+[These assertions](https://phpunit.de/manual/3.7/en/writing-tests-for-phpunit.html#writing-tests-for-phpunit.assertions.assertSelectCount) were originally provided with PHPUnit 3.3, but removed with PHPUnit 5.0

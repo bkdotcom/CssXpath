@@ -25,6 +25,8 @@ namespace bdk\CssXpath;
 class CssXpath
 {
 
+    private static $cache = array();
+
 	/**
 	 * css -> xpath
 	 *
@@ -34,8 +36,13 @@ class CssXpath
 	 */
 	public static function cssToXpath($selector)
 	{
+        if (isset(self::$cache[$selector])) {
+            return self::$cache[$selector];
+        }
+
         $xpath = ' ' . $selector;
         $strings = array();  // attribute && :contains() substitutions
+
         /*
         	The order in which items are replaced is IMPORTANT!
         */
@@ -60,7 +67,7 @@ class CssXpath
                             $return = '[contains(concat(" ", @'.$name.', " "), " '.$value.' ")]';
                             break;
                         case '|=':
-                            // begins with
+                            // equals or begins with, followed by -
                             $return = '[starts-with(concat(@'.$name.', "-"), "'.$value.'-")]';
                             break;
                         case '^=':
@@ -181,10 +188,9 @@ class CssXpath
                 	.'[@id="' . $matches[2] . '"]';
             }),
             // .className
-            // tricky..  without limiting the replacement, the first group will be empty for the 2nd class
+            // tricky.  without limiting the replacement, the first group will be empty for the 2nd class
+            // test case:
             //    foo.classa.classb
-            //       matches o.classa   and .classb
-            // need to limit to 1 replacement at a time and loop
             array('/([a-z0-9\]]?)\.(-?[_a-z]+[_a-z0-9-]*)/i', function ($matches) {
                 return $matches[1]
                 	.($matches[1] ? '' : '*')
@@ -230,6 +236,7 @@ class CssXpath
         	? $xpath
         	: '//'.$xpath;
         $xpath = preg_replace('#/{4}#', '', $xpath);
+        self::$cache[$selector] = $xpath;
         return $xpath;
 	}
 }

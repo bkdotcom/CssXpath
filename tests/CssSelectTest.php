@@ -60,6 +60,10 @@ class CssSelectTest extends \PHPUnit\Framework\TestCase
             array('[id="article"]', 1),
             array('.classa > .classb', 1),
             array('ul > li:last-child [href]', 1),
+            array('[class~=large] li[class~=a]', 2),
+            array('li[class]:not(.bar)', 1),
+            array(':header', 1),
+            array(".bar.a", 1),
         );
     }
 
@@ -70,6 +74,7 @@ class CssSelectTest extends \PHPUnit\Framework\TestCase
      * @param integer $count    expected number of matches
      *
      * @return void
+     *
      * @dataProvider selectProvider
      */
     public function testSelect($selector, $count)
