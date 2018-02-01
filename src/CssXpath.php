@@ -43,8 +43,6 @@ class CssXpath
         $xpath = ' ' . $selector;
         $strings = array();  // attribute && :contains() substitutions
 
-        $self = $this;  // PHP 5.3 workaround for use inside closure
-
         /*
         	The order in which items are replaced is IMPORTANT!
         */
@@ -100,10 +98,10 @@ class CssXpath
                 $strings[] = '[contains(text(), "'.$matches[1].'")]';
                 return '[{'.(count($strings)-1).'}]';
             }),
-            array('/([\s]?):not\((.*?)\)/', function ($matches) use (&$strings, $self) {
+            array('/([\s]?):not\((.*?)\)/', function ($matches) use (&$strings) {
                 // this currently works for simple :not(.classname)
                 // unsure of other selectors
-                $xpathNot = $self::cssToXpath($matches[2]);
+                $xpathNot = \bdk\CssXpath\CssXpath::cssToXpath($matches[2]);
                 $xpathNot = preg_replace('#^//\*\[(.+)\]#', '$1', $xpathNot);
                 $strings[] = ($matches[1] ? '*' : '').'[not('.$xpathNot.')]';
                 return '[{'.(count($strings)-1).'}]';
