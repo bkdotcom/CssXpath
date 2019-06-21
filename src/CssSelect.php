@@ -104,7 +104,7 @@ class CssSelect
     /**
      * Select elements using css $selector.
      *
-     * When $asArray is true:
+     * When $asDomList is false (default):
      * matching elements will be return as an associative array containing
      *      name : element name
      *      attributes : attributes array
