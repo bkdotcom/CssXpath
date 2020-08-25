@@ -63,7 +63,7 @@ class CssSelectTest extends \PHPUnit\Framework\TestCase
             array('[class~=large] li[class~=a]', 2),
             array('li[class]:not(.bar)', 1),
             array(':header', 1),
-            array(".bar.a", 1),
+            array('.bar.a', 1),
         );
     }
 

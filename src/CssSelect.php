@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of CssXpath
  *
@@ -33,7 +34,7 @@ use bdk\CssXpath\CssXpath;
 class CssSelect
 {
 
-    protected $DOMXpath;
+    protected $domXpath;
 
     /**
      * Constructor
@@ -58,7 +59,7 @@ class CssSelect
     public function __call($name, $arguments)
     {
         if ($name === 'select') {
-            return call_user_func_array(array($this, 'selectNonStatic'), $arguments);
+            return \call_user_func_array(array($this, 'selectNonStatic'), $arguments);
         }
     }
 
@@ -75,8 +76,20 @@ class CssSelect
     public static function __callStatic($name, $arguments)
     {
         if ($name === 'select') {
-            return call_user_func_array(array('self', 'selectStatic'), $arguments);
+            return \call_user_func_array(array('self', 'selectStatic'), $arguments);
         }
+    }
+
+    /**
+     * Set HTML
+     *
+     * @param string $html HTML
+     *
+     * @return void
+     */
+    public function setHtml($html = '')
+    {
+        $this->domXpath = $this->getDomXpath($html);
     }
 
     /**
@@ -84,15 +97,15 @@ class CssSelect
      *
      * @param string|DOMDocument $html      HTML string or DOMDocument
      * @param string             $selector  CSS selector
-     * @param boolean            $asDomList (false)
+     * @param bool               $asDomList (false)
      *
      * @return mixed
      */
     protected static function selectStatic($html, $selector, $asDomList = false)
     {
-        $DOMXpath = self::getDomXpath($html);
+        $domXpath = self::getDomXpath($html);
         $xpath = CssXpath::cssToXpath($selector);
-        $elements = $DOMXpath->evaluate($xpath);
+        $elements = $domXpath->evaluate($xpath);
         if (!$elements) {
             return array();
         }
@@ -112,34 +125,22 @@ class CssSelect
      *
      * Otherwise regular DOMElement's will be returned.
      *
-     * @param string  $selector  css selector
-     * @param boolean $asDomList (false)
+     * @param string $selector  css selector
+     * @param bool   $asDomList (false)
      *
      * @return mixed
      */
     protected function selectNonStatic($selector, $asDomList = false)
     {
-        $DOMXpath = $this->DOMXpath;
+        $domXpath = $this->domXpath;
         $xpath = CssXpath::cssToXpath($selector);
-        $elements = $DOMXpath->evaluate($xpath);
+        $elements = $domXpath->evaluate($xpath);
         if (!$elements) {
             return array();
         }
         return $asDomList
             ? $elements
             : self::elementsToArray($elements);
-    }
-
-    /**
-     * Set HTML
-     *
-     * @param string $html HTML
-     *
-     * @return void
-     */
-    public function setHtml($html = '')
-    {
-        $this->DOMXpath = $this->getDomXpath($html);
     }
 
     /**
@@ -153,7 +154,7 @@ class CssSelect
     {
         $array = array();
         for ($i = 0, $length = $elements->length; $i < $length; ++$i) {
-            if ($elements->item($i)->nodeType == XML_ELEMENT_NODE) {
+            if ($elements->item($i)->nodeType === XML_ELEMENT_NODE) {
                 $array[] = self::elementToArray($elements->item($i));
             }
         }
@@ -193,15 +194,15 @@ class CssSelect
         foreach ($element->childNodes as $child) {
             $innerHTML .= $element->ownerDocument->saveHTML($child);
         }
-        $innerHTML = preg_replace('/{amp}([0-9a-z]+);/i', '&\1;', $innerHTML);
+        $innerHTML = \preg_replace('/{amp}([0-9a-z]+);/i', '&\1;', $innerHTML);
         // $innerHTML = str_replace("\xc2\xa0", ' ', $innerHTML);  // &nbsp; && &#160; get converted to UTF-8 \xc2\xa0
         /*
             saveHTML doesn't close "void" tags  :(
         */
         $voidTags = array('area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr');
-        $regEx = '#<('.implode('|', $voidTags).')(\b[^>]*)>#';
-        $innerHTML = preg_replace($regEx, '<\\1\\2 />', $innerHTML);
-        return trim($innerHTML);
+        $regEx = '#<(' . \implode('|', $voidTags) . ')(\b[^>]*)>#';
+        $innerHTML = \preg_replace($regEx, '<\\1\\2 />', $innerHTML);
+        return \trim($innerHTML);
     }
 
     /**
@@ -214,27 +215,25 @@ class CssSelect
     protected static function getDomXpath($html)
     {
         if ($html instanceof \DOMDocument) {
-            $DOMXpath = new \DOMXpath($html);
-        } else {
-            libxml_use_internal_errors(true);
-            if (empty($html)) {
-                $html = '<!-- empty document -->';
-            }
-            $dom = new \DOMDocument();
-            /*
-                PHP bug: entities get converted
-            */
-            $html = preg_replace('/&([0-9a-z]+);/i', '{amp}\1;', $html);
-            $dom->loadHTML('<?xml encoding="UTF-8">'.$html); // seriously?
-            foreach ($dom->childNodes as $node) {
-                if ($node->nodeType == XML_PI_NODE) {
-                    $dom->removeChild($node); // remove xml encoding tag
-                    break;
-                }
-            }
-            $dom->encoding = 'UTF-8';
-            $DOMXpath = new \DOMXpath($dom);
+            return new \DOMXpath($html);
         }
-        return $DOMXpath;
+        \libxml_use_internal_errors(true);
+        if (empty($html)) {
+            $html = '<!-- empty document -->';
+        }
+        $dom = new \DOMDocument();
+        /*
+            PHP bug: entities get converted
+        */
+        // $html = preg_replace('/&([0-9a-z]+);/i', '{amp}\1;', $html);
+        $dom->loadHTML('<?xml encoding="UTF-8">' . $html); // seriously?
+        foreach ($dom->childNodes as $node) {
+            if ($node->nodeType === XML_PI_NODE) {
+                $dom->removeChild($node); // remove xml encoding tag
+                break;
+            }
+        }
+        $dom->encoding = 'UTF-8';
+        return new \DOMXpath($dom);
     }
 }
