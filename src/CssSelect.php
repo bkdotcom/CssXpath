@@ -76,7 +76,7 @@ class CssSelect
     public static function __callStatic($name, $arguments)
     {
         if ($name === 'select') {
-            return \call_user_func_array(array('self', 'selectStatic'), $arguments);
+            return \call_user_func_array(array(__CLASS__, 'selectStatic'), $arguments);
         }
     }
 

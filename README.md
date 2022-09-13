@@ -6,7 +6,7 @@ CssXpath
 * Provide PHPUnit Assertions (once provided by PHPUnit)
 
 ![No Dependencies](https://img.shields.io/badge/dependencies-none-333333.svg)
-[![Build Status](https://img.shields.io/travis/bkdotcom/CssXpath.svg)](https://travis-ci.org/bkdotcom/CssXpath)
+[![Build Status](https://img.shields.io/travis/com/bkdotcom/CssXpath.svg)](https://travis-ci.com/bkdotcom/CssXpath)
 
 ## Installation
 
