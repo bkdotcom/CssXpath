@@ -45,9 +45,6 @@ class CssXpathTest extends TestCase
             array('foo[id=bar]',        '//foo[@id="bar"]'),
             array('[style=color: red; border: 1px solid black;]',       '//*[@style="color: red; border: 1px solid black;"]'),
             array('foo[style=color: red; border: 1px solid black;]',    '//foo[@style="color: red; border: 1px solid black;"]'),
-            // array(':button',            '//input[@type="button"]'),
-            // array(':submit',            '//input[@type="submit"]'),
-            array('textarea',           '//textarea'),
             array(':first-child',       '//*[1]'),
             array('div:first-child',    '//div[1]'),
             array(':last-child',        '//*[last()]'),
@@ -67,6 +64,17 @@ class CssXpathTest extends TestCase
             # https://github.com/tj/php-selector/issues/14
             array('.classa > .classb',  '//*[contains(concat(" ", normalize-space(@class), " "), " classa ")]/*[contains(concat(" ", normalize-space(@class), " "), " classb ")]'),
             array('ul > li:first-child', '//ul/li[1]'),
+            array(':button',            '//*[self::button or @type="button"]'),
+            array(':submit',            '//*[@type="submit" or (self::button and not(@type))]'),
+            array(':input', '//*[self::input or self::select or self::textarea or self::button]'),
+            array('textarea',           '//textarea'),
+            array('input:password', '//input[@type="password"]'),
+            array(':header', '//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6]'),
+            array(':autocomplete', '//[@autocomplete="on"]'),
+            array(':autofocus', '//[@autofocus]'),
+            array(':scope', ''),
+            array('div:not(".thing")', '//div[not(//"*[contains(concat(" ", normalize-space(@class), " "), " thing ")]")]'),
+            array('a:has(> img)', '//a[count(/img) > 0]'),
         );
     }
 

@@ -49,7 +49,7 @@ class CssXpath
         }
 
         $xpath = self::processRegexs($selector);
-        $xpath = \preg_match('/^\/\//', $xpath)
+        $xpath = \preg_match('/^\//', $xpath)
         	? $xpath
         	: '//' . $xpath;
         $xpath = \preg_replace('#/{4}#', '', $xpath);
@@ -144,6 +144,10 @@ class CssXpath
                 self::$strings[] = ($matches[1] ? '*' : '') . '[not(' . $xpathNot . ')]';
                 return '[{' . (\count(self::$strings) - 1) . '}]';
             }),
+            array('/([\s]?):has\((.*?)\)/', static function ($matches) {
+                self::$strings[] = '[count(' . self::cssToXpath($matches[2]) . ') > 0]';
+                return '[{' . (\count(self::$strings) - 1) . '}]';
+            }),
             // All blocks of 2 or more spaces
             array('/\s{2,}/', static function () {
                 return ' ';
@@ -236,23 +240,6 @@ class CssXpath
             }, 1),
             array('/:scope/', static function () {
                 return '//';
-            }),
-            // The Relational Pseudo-class: :has()
-            // https://www.w3.org/TR/selectors-4/#has-pseudo
-            // E! : https://www.w3.org/TR/selectors4/
-            array('/^.+!.+$/', static function ($matches) {
-                $subSelectors = \explode(',', $matches[0]);
-                foreach ($subSelectors as $i => $subSelector) {
-                    $parts = \explode('!', $subSelector);
-                    $subSelector = \array_shift($parts);
-                    if (\preg_match_all('/((?:[^\/]*\/?\/?)|$)/', $parts[0], $matches)) {
-                        $results = $matches[0];
-                        $results[] = \str_repeat('/..', \count($results) - 2);
-                        $subSelector .= \implode('', $results);
-                    }
-                    $subSelectors[$i] = $subSelector;
-                }
-                return \implode(',', $subSelectors);
             }),
             // Restore strings
             array('/\[\{(\d+)\}\]/', static function ($matches) {
