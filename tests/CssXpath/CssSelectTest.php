@@ -99,14 +99,14 @@ class CssSelectTest extends TestCase
   <span class="classa"><span class="classb">hi</span></span>
 HTML;
         $found = CssSelect::select($html, $selector);
-        self::assertCount($count, $found);
+        self::assertSame($count, \count($found));
 
         if ($inner !== null) {
             self::assertSame($inner, $found[0]['innerHTML']);
         }
 
         $found = CssSelect::select($html, $selector, true);
-        self::assertCount($count, $found);
+        self::Same($count, \count($found));
         self::assertContainsOnlyInstancesOf('DOMElement', $found);
 
         if ($inner !== null) {
@@ -150,16 +150,16 @@ HTML;
         $cssSelect = new CssSelect($dom);
 
         $found = $cssSelect->select($selector);
-        self::assertCount($count, $found);
+        self::assertSame($count, \count($found));
 
         $found = $cssSelect->select($selector, true);
-        self::assertCount($count, $found);
+        self::assertSame($count, \count($found));
         self::assertContainsOnlyInstancesOf('DOMElement', $found);
     }
 
     public function testSelectFromEmpty()
     {
         $found = CssSelect::select('', '#hello');
-        self::assertCount(0, $found);
+        self::assertSame(0, \count($found));
     }
 }
