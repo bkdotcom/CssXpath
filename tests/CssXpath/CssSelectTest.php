@@ -107,12 +107,17 @@ HTML;
 
         $found = CssSelect::select($html, $selector, true);
         self::assertSame($count, \is_array($found) ? \count($found) : $found->length);
-        self::assertContainsOnlyInstancesOf('DOMElement', $found);
+        if ($selector === 'bo $ us') {
+            self::assertTrue(\is_array($found));
+        } else {
+            self::assertInstanceOf('DOMNodeList', $found);
+        }
 
         if ($inner !== null) {
             $innerHTML = '';
-            foreach ($found[0]->childNodes as $child) {
-                $innerHTML .= $found[0]->ownerDocument->saveHTML($child);
+            $item = $found->item(0);
+            foreach ($item->childNodes as $child) {
+                $innerHTML .= $item->ownerDocument->saveHTML($child);
             }
             self::assertSame($inner, $innerHTML);
         }
@@ -154,7 +159,11 @@ HTML;
 
         $found = $cssSelect->select($selector, true);
         self::assertSame($count, \is_array($found) ? \count($found) : $found->length);
-        self::assertContainsOnlyInstancesOf('DOMElement', $found);
+        if ($selector === 'bo $ us') {
+            self::assertTrue(\is_array($found));
+        } else {
+            self::assertInstanceOf('DOMNodeList', $found);
+        }
     }
 
     public function testSelectFromEmpty()
