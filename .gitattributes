@@ -1,0 +1,16 @@
+# perform LF normalization
+*.php text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+
+*.png binary
+
+/.code-climate.json export-ignore
+/.gitattributes export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/phpunit.xml.dist export-ignore
+/tests export-ignore

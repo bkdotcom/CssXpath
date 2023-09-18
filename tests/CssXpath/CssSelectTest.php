@@ -1,13 +1,17 @@
 <?php
 
+namespace bdk\Test\CssXpath;
+
 use bdk\CssXpath\CssSelect;
+use PHPUnit\Framework\TestCase;
 
 /**
  * PHPUnit tests for CssSelect
+ *
+ * @covers \bdk\CssXpath\CssSelect
  */
-class CssSelectTest extends \PHPUnit\Framework\TestCase
+class CssSelectTest extends TestCase
 {
-
     /**
      * Test
      *
@@ -35,7 +39,7 @@ class CssSelectTest extends \PHPUnit\Framework\TestCase
             array('div[id="article"]', 1),
             array('h2:contains(Article)', 1),
             array('h2:contains(Article) + p', 1),
-            array('h2:contains(Article) + p:contains(Contents)', 1),
+            array('h2:contains(Article) + p:contains(Contents)', 1, 'Contents &amp; Stuff'),
             array('div p + ul', 1),
             array('ul li', 5),
             array('li ~ li', 4),
@@ -64,25 +68,26 @@ class CssSelectTest extends \PHPUnit\Framework\TestCase
             array('li[class]:not(.bar)', 1),
             array(':header', 1),
             array('.bar.a', 1),
+            array('bo $ us', 0),
         );
     }
 
     /**
      * test selector
      *
-     * @param string  $selector css selector
-     * @param integer $count    expected number of matches
+     * @param string $selector css selector
+     * @param int    $count    expected number of matches
      *
      * @return void
      *
      * @dataProvider selectProvider
      */
-    public function testSelect($selector, $count)
+    public function testSelectStatic($selector, $count, $inner = null)
     {
         $html = <<<HTML
   <div id="article" class="block large">
     <h2>Article Name</h2>
-    <p>Contents of article</p>
+    <p>Contents &amp; Stuff</p>
     <ul>
       <li class="a">One</li>
       <li class="bar">Two</li>
@@ -94,7 +99,67 @@ class CssSelectTest extends \PHPUnit\Framework\TestCase
   <span class="classa"><span class="classb">hi</span></span>
 HTML;
         $found = CssSelect::select($html, $selector);
-        $foundCount = count($found);
-        $this->assertSame($count, $foundCount);
+        self::assertCount($count, $found);
+
+        if ($inner !== null) {
+            self::assertSame($inner, $found[0]['innerHTML']);
+        }
+
+        $found = CssSelect::select($html, $selector, true);
+        self::assertCount($count, $found);
+        self::assertContainsOnlyInstancesOf('DOMElement', $found);
+
+        if ($inner !== null) {
+            $innerHTML = '';
+            foreach ($found[0]->childNodes as $child) {
+                $innerHTML .= $found[0]->ownerDocument->saveHTML($child);
+            }
+            self::assertSame($inner, $innerHTML);
+        }
+    }
+
+    /**
+     * test selector
+     *
+     * @param string $selector css selector
+     * @param int    $count    expected number of matches
+     *
+     * @return void
+     *
+     * @dataProvider selectProvider
+     */
+    public function testSelectInstance($selector, $count, $inner = null)
+    {
+        $html = <<<HTML
+  <div id="article" class="block large">
+    <h2>Article Name</h2>
+    <p>Contents &amp; Stuff</p>
+    <ul>
+      <li class="a">One</li>
+      <li class="bar">Two</li>
+      <li class="bar a">Three</li>
+      <li>Four</li>
+      <li><a href="#">Five</a></li>
+    </ul>
+  </div>
+  <span class="classa"><span class="classb">hi</span></span>
+HTML;
+
+        $dom = new \DOMDocument();
+        $dom->loadHTML('<?xml encoding="UTF-8">' . $html);
+        $cssSelect = new CssSelect($dom);
+
+        $found = $cssSelect->select($selector);
+        self::assertCount($count, $found);
+
+        $found = $cssSelect->select($selector, true);
+        self::assertCount($count, $found);
+        self::assertContainsOnlyInstancesOf('DOMElement', $found);
+    }
+
+    public function testSelectFromEmpty()
+    {
+        $found = CssSelect::select('', '#hello');
+        self::assertCount(0, $found);
     }
 }

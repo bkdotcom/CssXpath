@@ -1,13 +1,17 @@
 <?php
 
+namespace bdk\Test\CssXpath;
+
 use bdk\CssXpath\CssXpath;
+use PHPUnit\Framework\TestCase;
 
 /**
  * PHPUnit tests for CssXpath
+ *
+ * @covers \bdk\CssXpath\CssXpath
  */
-class CssXpathTest extends \PHPUnit\Framework\TestCase
+class CssXpathTest extends TestCase
 {
-
     /**
      * Test
      *

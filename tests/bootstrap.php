@@ -7,16 +7,9 @@ $classMap = array(
     'PHPUnit_Framework_TestSuite' => 'PHPUnit\Framework\TestSuite',
 );
 foreach ($classMap as $old => $new) {
-    if (!class_exists($new)) {
-        class_alias($old, $new);
+    if (\class_exists($new) === false) {
+        \class_alias($old, $new);
     }
 }
 
-$includes = array(
-	__DIR__.'/../src/CssXpath.php',
-	__DIR__.'/../src/CssSelect.php',
-	__DIR__.'/../src/DOMTestCase.php',
-);
-foreach ($includes as $file) {
-	require $file;
-}
+require __DIR__ . '/../vendor/autoload.php';

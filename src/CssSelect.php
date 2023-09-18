@@ -6,7 +6,7 @@
  * @package   CssXPath
  * @author    Brad Kent <bkfake-github@yahoo.com>
  * @license   http://opensource.org/licenses/MIT MIT
- * @copyright 2018 Brad Kent
+ * @copyright 2018-2023 Brad Kent
  * @version   1.0
  *
  * @link http://www.github.com/bkdotcom/CssXpath
@@ -15,6 +15,10 @@
 namespace bdk\CssXpath;
 
 use bdk\CssXpath\CssXpath;
+use DOMDocument;
+use DOMElement;
+use DOMNodeList;
+use DOMXpath;
 
 /**
  * CSS selector class
@@ -33,7 +37,6 @@ use bdk\CssXpath\CssXpath;
  */
 class CssSelect
 {
-
     protected $domXpath;
 
     /**
@@ -146,11 +149,11 @@ class CssSelect
     /**
      * Convert DOMNodeList to an array.
      *
-     * @param \DOMNodeList $elements elements
+     * @param DOMNodeList $elements elements
      *
      * @return array
      */
-    protected static function elementsToArray(\DOMNodeList $elements)
+    protected static function elementsToArray(DOMNodeList $elements)
     {
         $array = array();
         for ($i = 0, $length = $elements->length; $i < $length; ++$i) {
@@ -164,16 +167,16 @@ class CssSelect
     /**
      * Convert DOMElement to an array.
      *
-     * @param \DOMElement $element element
+     * @param DOMElement $element element
      *
      * @return array
      */
-    protected static function elementToArray(\DOMElement $element)
+    protected static function elementToArray(DOMElement $element)
     {
         $array = array(
-            'name' => $element->nodeName,
             'attributes' => array(),
             'innerHTML' => self::domInnerHtml($element),
+            'name' => $element->nodeName,
         );
         foreach ($element->attributes as $key => $attr) {
             $array['attributes'][$key] = $attr->value;
@@ -184,48 +187,42 @@ class CssSelect
     /**
      * Build inner html for given DOMElement
      *
-     * @param \DOMElement $element dom element
+     * @param DOMElement $element dom element
      *
      * @return string html
      */
-    protected static function domInnerHtml(\DOMElement $element)
+    protected static function domInnerHtml(DOMElement $element)
     {
         $innerHTML = '';
         foreach ($element->childNodes as $child) {
             $innerHTML .= $element->ownerDocument->saveHTML($child);
         }
-        $innerHTML = \preg_replace('/{amp}([0-9a-z]+);/i', '&\1;', $innerHTML);
-        // $innerHTML = str_replace("\xc2\xa0", ' ', $innerHTML);  // &nbsp; && &#160; get converted to UTF-8 \xc2\xa0
         /*
             saveHTML doesn't close "void" tags  :(
         */
-        $voidTags = array('area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr');
+        $voidTags = array('area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr');
         $regEx = '#<(' . \implode('|', $voidTags) . ')(\b[^>]*)>#';
         $innerHTML = \preg_replace($regEx, '<\\1\\2 />', $innerHTML);
         return \trim($innerHTML);
     }
 
     /**
-     * Return \DOMXpath object
+     * Return DOMXpath object
      *
-     * @param string|\DOMDocument $html HTML string or \DOMDocument object
+     * @param string|DOMDocument $html HTML string or DOMDocument object
      *
      * @return DOUMXpath
      */
     protected static function getDomXpath($html)
     {
-        if ($html instanceof \DOMDocument) {
-            return new \DOMXpath($html);
+        if ($html instanceof DOMDocument) {
+            return new DOMXpath($html);
         }
         \libxml_use_internal_errors(true);
         if (empty($html)) {
             $html = '<!-- empty document -->';
         }
-        $dom = new \DOMDocument();
-        /*
-            PHP bug: entities get converted
-        */
-        // $html = preg_replace('/&([0-9a-z]+);/i', '{amp}\1;', $html);
+        $dom = new DOMDocument();
         $dom->loadHTML('<?xml encoding="UTF-8">' . $html); // seriously?
         foreach ($dom->childNodes as $node) {
             if ($node->nodeType === XML_PI_NODE) {
@@ -234,6 +231,6 @@ class CssSelect
             }
         }
         $dom->encoding = 'UTF-8';
-        return new \DOMXpath($dom);
+        return new DOMXpath($dom);
     }
 }
