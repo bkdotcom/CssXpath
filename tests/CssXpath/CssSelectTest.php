@@ -106,7 +106,7 @@ HTML;
         }
 
         $found = CssSelect::select($html, $selector, true);
-        self::Same($count, \count($found));
+        self::assertSame($count, \count($found));
         self::assertContainsOnlyInstancesOf('DOMElement', $found);
 
         if ($inner !== null) {
