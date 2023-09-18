@@ -106,7 +106,7 @@ HTML;
         }
 
         $found = CssSelect::select($html, $selector, true);
-        self::assertSame($count, \count($found));
+        self::assertSame($count, \is_array($found) ? \count($found) : $found->length);
         self::assertContainsOnlyInstancesOf('DOMElement', $found);
 
         if ($inner !== null) {
@@ -153,7 +153,7 @@ HTML;
         self::assertSame($count, \count($found));
 
         $found = $cssSelect->select($selector, true);
-        self::assertSame($count, \count($found));
+        self::assertSame($count, \is_array($found) ? \count($found) : $found->length);
         self::assertContainsOnlyInstancesOf('DOMElement', $found);
     }
 
