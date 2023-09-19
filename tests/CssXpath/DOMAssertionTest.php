@@ -28,6 +28,7 @@ class DOMAssertionTest extends TestCase
             '>' => 0,
             '>=' => 0,
         ), '<div class="name"></div><div class="name">Jimmy</div>');
+        self::assertSelectEquals('.name', 'fred', 0, '<div class="name"></div><div class="name">Jimmy</div>');
     }
 
     public function testAssertSelectRegExp()
@@ -40,12 +41,24 @@ class DOMAssertionTest extends TestCase
         $caughtException = false;
         $message = null;
         try {
+            self::assertSelectEquals('.name', '', 'zero', '');
+        } catch (\PHPUnit\Framework\Exception $e) {
+            $caughtException = true;
+            $message = $e->getMessage();
+        }
+        self::assertTrue($caughtException);
+        self::assertSame('Invalid count format.  Expected bool, int, or array()', $message);
+
+
+        $caughtException = false;
+        $message = null;
+        try {
             self::assertSelectEquals('.name', '', array(), '');
         } catch (\PHPUnit\Framework\Exception $e) {
             $caughtException = true;
             $message = $e->getMessage();
         }
         self::assertTrue($caughtException);
-        self::assertSame('Invalid count format', $message);
+        self::assertSame('Invalid count.  Array should contain >, >=, <, and/or <=', $message);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of CssXpath
  *
@@ -80,47 +81,19 @@ trait DOMAssertionTrait
     public static function assertSelectEquals($selector, $content, $count, $actual, $message = '', $isHtml = true)
     {
         $found = CssSelect::select($actual, $selector);
-        if (\is_string($content)) {
-            foreach ($found as $k => $node) {
-                $keep = $content === ''
-                    ? $node['innerHTML'] === ''
-                    : \strstr($node['innerHTML'], $content) !== false;
-                if (\preg_match('/^regexp\s*:\s*(.*)/i', $content, $matches)) {
-                    $keep = (bool) \preg_match($matches[1], $node['innerHTML']);
-                }
-                if (!$keep) {
-                    unset($found[$k]);
-                }
+        $found = \array_filter($found, static function ($node) use ($content) {
+            if (\is_string($content) === false) {
+                return true;
             }
-        }
-        $countFound = \count($found);
-        if (\is_numeric($count)) {
-            self::assertEquals($count, $countFound, $message);
-            return;
-        }
-        if (\is_bool($count)) {
-            $isFound = \count($found) > 0;
-            $count
-                ? self::assertTrue($isFound, $message)
-                : self::assertFalse($isFound, $message);
-            return;
-        }
-        if (\is_array($count) && \array_intersect_key($count, \array_flip(array('>', '<', '>=', '<=')))) {
-            if (isset($count['>'])) {
-                self::assertTrue($countFound > $count['>'], $message);
+            if ($content === '') {
+                return $node['innerHTML'] === '';
             }
-            if (isset($count['>='])) {
-                self::assertTrue($countFound >= $count['>='], $message);
+            if (\preg_match('/^regexp\s*:\s*(.*)/i', $content, $matches)) {
+                return \preg_match($matches[1], $node['innerHTML']) === 1;
             }
-            if (isset($count['<'])) {
-                self::assertTrue($countFound < $count['<'], $message);
-            }
-            if (isset($count['<='])) {
-                self::assertTrue($countFound <= $count['<='], $message);
-            }
-            return;
-        }
-        throw new \PHPUnit\Framework\Exception('Invalid count format');
+            return \strstr($node['innerHTML'], $content) !== false;
+        });
+        self::assertDomCount(\count($found), $count, $message);
     }
 
     /**
@@ -142,5 +115,64 @@ trait DOMAssertionTrait
     public static function assertSelectRegExp($selector, $pattern, $count, $actual, $message = '', $isHtml = true)
     {
         self::assertSelectEquals($selector, 'regexp:' . $pattern, $count, $actual, $message, $isHtml);
+    }
+
+    /**
+     * Assert number found elements match expected
+     *
+     * @param int            $countActual Num of matches actually found
+     * @param int|bool|array $count       bool, count, or array('>'=5, <=10)
+     * @param string         $message     Exception message
+     *
+     * @return void
+     *
+     * @throws \PHPUnit\Framework\Exception Invalid count format.
+     */
+    private static function assertDomCount($countActual, $count, $message)
+    {
+        self::assertValidDomCount($count);
+        if ($count === true) {
+            $count = array('>' => 0);
+        } elseif ($count === false) {
+            $count = 0;
+        }
+        if (\is_numeric($count)) {
+            self::assertEquals($count, $countActual, $message);
+            return;
+        }
+        $countVals = \array_merge(array(
+            '<' => 0,
+            '<=' => 0,
+            '>' => 0,
+            '>=' => 0,
+        ), $count);
+        $count = \array_intersect_key(array(
+            '<' => $countActual < $countVals['<'],
+            '<=' => $countActual <= $countVals['<='],
+            '>' => $countActual > $countVals['>'],
+            '>=' => $countActual >= $countVals['>='],
+        ), $count);
+        \array_walk($count, static function ($val) use ($message) {
+            self::assertTrue($val, $message);
+        });
+    }
+
+    /**
+     * Assert bool, int, or array supplied for count
+     *
+     * @param mixed $count Count value
+     *
+     * @return void
+     *
+     * @throws \PHPUnit\Framework\Exception
+     */
+    private static function assertValidDomCount($count)
+    {
+        if (\is_bool($count) === false && \is_numeric($count) === false && \is_array($count) === false) {
+            throw new \PHPUnit\Framework\Exception('Invalid count format.  Expected bool, int, or array()');
+        }
+        if (\is_array($count) && \array_intersect_key($count, \array_flip(array('>', '<', '>=', '<='))) === array()) {
+            throw new \PHPUnit\Framework\Exception('Invalid count.  Array should contain >, >=, <, and/or <=');
+        }
     }
 }
