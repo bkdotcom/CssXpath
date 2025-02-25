@@ -29,11 +29,17 @@ class DOMAssertionTest extends TestCase
             '>=' => 0,
         ), '<div class="name"></div><div class="name">Jimmy</div>');
         self::assertSelectEquals('.name', 'fred', 0, '<div class="name"></div><div class="name">Jimmy</div>');
+
+        self::assertSelectEquals('.array-inner > li > .t_array > .t_keyword', 'array', true, '<li class="m_log"><span class="t_array"><span class="t_keyword">array</span><span class="t_punct">(</span>
+            <ul class="array-inner list-unstyled">
+                <li><span class="t_key">foo</span><span class="t_operator">=&gt;</span><span class="t_string">bar</span></li>
+                <li><span class="t_key">val</span><span class="t_operator">=&gt;</span><span class="t_array"><span class="t_keyword">array</span> <span class="t_recursion">*RECURSION*</span></span></li>
+            </ul><span class="t_punct">)</span></span></li>');
     }
 
     public function testAssertSelectRegExp()
     {
-        self::assertSelectRegExp('.name', "/Sam/", 1, '<div class="name">Sam</div>');
+        self::assertSelectRegExp('.name', '/Sam/', 1, '<div class="name">Sam</div>');
     }
 
     public function testInvalidCountArg()

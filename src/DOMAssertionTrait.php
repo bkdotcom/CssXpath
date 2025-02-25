@@ -14,6 +14,8 @@
 
 namespace bdk\CssXpath;
 
+use bdk\CssXpath\CssSelect;
+
 /**
  * PHPUnit DOM Assertions.
  *

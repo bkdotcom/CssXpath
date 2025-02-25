@@ -1,33 +1,33 @@
 {
-	"name": "bdk/css-xpath",
-	"description": "Search html via CSS selector or convert css selector to xpath",
-	"keywords": ["css","xpath"],
-	"homepage": "http://github.com/bkdotcom/CssXpath",
-	"license": "MIT",
-	"authors": [
-		{
-			"name": "Brad Kent",
-			"email": "bkfake-github@yahoo.com",
-			"homepage": "http://www.bradkent.com/",
-			"role": "Developer"
-		}
-	],
-	"autoload": {
-		"psr-4": {
-			"bdk\\CssXpath\\": "src/"
-		}
-	},
+  "name": "bdk/css-xpath",
+  "description": "Search html via CSS selector or convert css selector to xpath",
+  "keywords": ["css","xpath"],
+  "homepage": "http://github.com/bkdotcom/CssXpath",
+  "license": "MIT",
+  "authors": [
+     {
+      "name": "Brad Kent",
+      "email": "bkfake-github@yahoo.com",
+      "homepage": "http://www.bradkent.com/",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "bdk\\CssXpath\\": "src/"
+    }
+  },
     "autoload-dev": {
         "psr-4": {
             "bdk\\Test\\": "tests/"
         }
     },
-	"require": {
-		"php": ">=5.3.0"
-	},
-	"require-dev": {
-        "phpunit/phpunit": "^4.0 | ^5.0 | ^6.0 | ^7.0 | ^8.0 | ^9.0"
-	},
+  "require": {
+    "php": ">=5.3.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0 || ^8.0 || ^9.0"
+  },
     "scripts": {
         "coverage" : [
             "vendor/bin/phpunit -v --coverage-clover coverage/clover.xml --coverage-html coverage/html"
