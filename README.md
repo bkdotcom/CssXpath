@@ -6,7 +6,7 @@ CssXpath
 * Provide PHPUnit Assertions (once provided by PHPUnit)
 
 ![No Dependencies](https://img.shields.io/badge/dependencies-none-333333.svg)
-![Supported PHP versions](https://img.shields.io/static/v1?label=PHP&message=5.4%20-%208.4&color=blue)
+![Supported PHP versions](https://img.shields.io/static/v1?label=PHP&message=5.4%20-%208.5&color=blue)
 ![Build Status](https://img.shields.io/github/actions/workflow/status/bkdotcom/CssXpath/phpunit.yml.svg?logo=github)
 [![Maintainability](https://img.shields.io/codeclimate/maintainability/bkdotcom/CssXpath.svg?logo=codeclimate)](https://codeclimate.com/github/bkdotcom/CssXpath)
 [![Coverage](https://img.shields.io/codeclimate/coverage-letter/bkdotcom/CssXpath.svg?logo=codeclimate)](https://codeclimate.com/github/bkdotcom/CssXpath)
